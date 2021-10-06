@@ -1,0 +1,4 @@
+image/
+*.o
+ebpf_fuzzer
+.ycm_extra_conf.py
