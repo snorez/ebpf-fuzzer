@@ -119,6 +119,8 @@ An example of the config file:
 		"guest_workdir": "/tmp/",
 		"guest_user": "test",
 		"sample_fname": "test.c",
+		"body1_len": "24",
 	}
 ]
 ```
+The `body1_len` is used in mutate module, it's the count of instructions to generate in `gen_body1()`. The larger you give, the lower valid sample rate you will get. Default value is 0x18.
