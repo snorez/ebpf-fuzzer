@@ -77,3 +77,48 @@ The first time I run the fuzzer to trigger [cve-2020-8835](https://www.thezdi.co
 This is a good way to detect bugs in the bpf verifier.
 
 What else?
+
+# How to run
+After compiling the clib and this project, use `./ebpf_fuzzer /path/to/config 0` to startup the fuzzer.
+
+For the bzImage file, make sure the following config options are enabled:
+```
+CONFIG_CONFIGFS_FS=y
+CONFIG_SECURITYFS=y
+CONFIG_E1000=y
+CONFIG_BINFMT_MISC=y
+```
+
+When the bzImage and buster.img are ready, test the qemu first:
+
+Launch qemu:
+```
+/usr/bin/qemu-system-x86_64 -m 2G -smp 2 -kernel /path/to/bzImage -append 'console=ttyS0 root=/dev/sda earlyprintk=serial net.ifnames=0' -drive file=/path/to/buster.img,format=raw -net user,host=10.0.2.10,hostfwd=tcp:127.0.0.1:10021-:22 -net nic,model=e1000 -enable-kvm -nographic
+```
+
+Communicate with the guest
+```
+ssh -q -i /path/to/buster.id_rsa -p 10021 -o 'StrictHostKeyChecking no' test@127.0.0.1 id
+```
+
+An example of the config file:
+```json
+[
+	{
+		"version": "general",
+		"qemu_exec_path": "/path/to/qemu-system-x86_64",
+		"bzImage_path": "/path/to/bzImage",
+		"osImage_path": "/path/to/buster.img",
+		"rsa_path": "/path/to/buster.id_rsa",
+		"idle_sec": "1800",
+		"host_ip": "10.0.2.10",
+		"instance_nr": "8",
+		"instance_memsz": "1",
+		"instance_core": "2",
+		"env_workdir": "/path/to/fuzzer_workdir",
+		"guest_workdir": "/tmp/",
+		"guest_user": "test",
+		"sample_fname": "test.c",
+	}
+]
+```
