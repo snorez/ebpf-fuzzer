@@ -9,6 +9,8 @@ It contains three parts:
 # QEMU FUZZLIB
 This module is mainly used to test the linux kernel. It uses [the modified syzkaller script](https://github.com/snorez/clib/blob/master/tools/create-image.sh) to generate debian buster image file and all other necessary files. The modified script adds a new normal user `test` without a password.
 
+**NOTE**: use [This create-image.sh](https://github.com/snorez/clib/blob/master/tools/create-image.sh) to create the buster img: `./create-image.sh --distribution buster`
+
 This module provide an interface `qemu_fuzzlib_env_setup()` for the caller to
 initialize the fuzzing environment, the prototype of the function is:
 ```c
@@ -124,3 +126,7 @@ An example of the config file:
 ]
 ```
 The `body1_len` is used in mutate module, it's the count of instructions to generate in `gen_body1()`. The larger you give, the lower valid sample rate you will get. Default value is 0x18.
+
+# FAQ
+Q: When running the fuzzer, the output is 'total: 0'?<br>
+A: Try to create the buster image with `./create-image.sh --distribution buster`. Check [issue #1](https://github.com/snorez/ebpf-fuzzer/issues/1).
